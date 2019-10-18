@@ -13,6 +13,4 @@ deploy:
   email: $NPM_USER_EMAIL
   api_key: $NPM_TOKEN
   on:
-    branches:
-      only:
-        - "/^v?[0-9\\.]+/"
+    branch: "/^v?[0-9\\.]+/"
