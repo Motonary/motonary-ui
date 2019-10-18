@@ -4,7 +4,7 @@ node_js:
 install:
   - npm install
 cache:
-  directories: vendor/node_modules
+  directories: node_modules
 script:
   - npx --no-install prettier --check './src/**/*.[jt]s?(x)' './.storybook/*.js?(x)'
   - npx --no-install tsc --noEmit --pretty
@@ -14,5 +14,4 @@ deploy:
   api_key: $NPM_TOKEN
   on:
     branch: /v[0-9]+\.[0-9]+\.[0-9]+[\-a-z0-9]*/
-    tags: true
     
