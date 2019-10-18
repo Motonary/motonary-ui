@@ -1,0 +1,99 @@
+version: 2
+general_options: &general_options
+  docker:
+    - images: circleci/node:10-browsers
+  working_repository: ~/repo
+jobs:
+  checkout:
+    <<: *general_options
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package-lock.json" }}
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - save_cache:
+          key: v1-dependencies-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - .
+  lint:
+    <<: *general_options
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Lint code
+          command: npx --no-install prettier --check './src/**/*.[jt]s?(x)' './.storybook/*.js?(x)'
+  dry-compile:
+    <<: *general_options
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Compile code dryly
+          command: npx --no-install tsc --noEmit --pretty
+  check-version:
+    <<: *general_options
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Set npm auth token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Check package's version
+          command: npx -p can-npm-publish@1.3.1 can-npm-publish --verbose
+  publish:
+    <<: *general_options
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Compile TypeScript
+          command: npx --no-install tsc --declaration --outDir ./dist
+      - run:
+          name: Set npm auth token
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+      - run:
+          name: Check package's version
+          command: npx -p can-npm-publish@1.3.1 can-npm-publish --verbose
+      - run:
+          name: Publish
+          command: npm publish
+workflows:
+  version: 2
+  default:
+    jobs:
+      - checkout
+      - lint:
+          requires:
+            - checkout
+      - dry-compile:
+          requires:
+            - checkout
+      - check-version:
+          requires:
+            - lint
+            - dry-compile
+          filters:
+            branches:
+              only: /v[0-9]+\.[0-9]+\.[0-9]+[\-a-z0-9]*/
+      - hold-to-publish:
+          type: approval
+          requires:
+            - check-version
+          filters:
+            branches:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+[\-a-z0-9]*/
+      - publish:
+          requires:
+            - hold-to-publish
+          filters:
+            branches:
+              only: /^v[0-9]+\.[0-9]+\.[0-9]+[\-a-z0-9]*/
