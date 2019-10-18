@@ -14,4 +14,3 @@ deploy:
   api_key: $NPM_TOKEN
   on:
     branch: "/^v?[0-9\\.]+/"
-    
