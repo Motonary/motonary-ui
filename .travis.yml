@@ -15,4 +15,4 @@ deploy:
   on:
     branches:
       only:
-        - "/^v?[0-9\\.]+/"
+        - master
