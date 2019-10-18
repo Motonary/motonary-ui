@@ -12,6 +12,7 @@ deploy:
   provider: npm
   email: $NPM_USER_EMAIL
   api_key: $NPM_TOKEN
-  branches:
-    only:
-      - "/^v?[0-9\\.]+/"
+  on:
+    branches:
+      only:
+        - "/^v?[0-9\\.]+/"
