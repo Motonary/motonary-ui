@@ -9,6 +9,14 @@
   },
   "author": "rechtburg (YUKI SHIROTA)",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/motonary/motonary-ui.git"
+  },
+  "bugs": {
+    "url": "https://github.com/readyfor/motonary/motonary-ui.git"
+  },
+  "homepage": "https://github.com/motonary/motonary-ui#readme",
   "peerDependencies": {
     "react": "*",
     "@emotion/styled": "*"
