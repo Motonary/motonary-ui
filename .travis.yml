@@ -8,7 +8,6 @@ cache:
 script:
   - npx --no-install prettier --check './src/**/*.[jt]s?(x)' './.storybook/*.js?(x)'
   - npx --no-install tsc --noEmit --pretty
-  - echo $branch
 deploy:
   provider: npm
   email: $NPM_USER_EMAIL
