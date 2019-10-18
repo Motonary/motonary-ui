@@ -1,0 +1,18 @@
+languages: node_js
+
+node_js:
+  - 10
+
+lint_script:
+  - npx --no-install prettier --check './src/**/*.[jt]s?(x)' './.storybook/*.js?(x)'
+
+dry_compile_script:
+  - npx --no-install tsc --noEmit --pretty
+
+deploy:
+  provider: npm
+  email: $NPM_USER_EMAIL
+  api_key: $NPM_TOKEN
+  on:
+    tags: true
+    branch: /v[0-9]+\.[0-9]+\.[0-9]+[\-a-z0-9]*/
